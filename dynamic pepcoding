@@ -1,0 +1,425 @@
+#include <iostream>
+using namespace std;
+
+
+//UGLY NUMBER 
+// prime factors use priority queue 
+
+//maximum sum bitonic subsequence 
+int maxSumBS(int arr[] , int n )
+{
+    vector<int>ford(n,0);
+    
+    
+    for(int i=0;i<n;i++)
+    {
+        ford[i]=arr[i];
+        for(int j=0;j<i;j++)
+        {
+            if(arr[i]>arr[j])
+            {
+                ford[i]=max(ford[i],arr[i]+ford[j]);
+            }
+        }
+    }
+    
+    int ans=0;
+    vector<int>bac(n,0);
+    
+    for(int i=n-1;i>=0;i--)
+    {
+        bac[i]=arr[i];
+        for(int j=n-1;j>i;j--)
+        {
+            if(arr[i]>arr[j])
+            {
+                bac[i]=max(bac[i],arr[i]+bac[j]);
+            }
+        }
+        ans=max(ans,ford[i]+bac[i]-arr[i]);
+    }
+    return ans;
+}
+
+//LCS of 3 string 
+int LCSof3 (string A, string B, string C, int n1, int n2, int n3)
+{
+   int dp[n1+1][n2+1][n3+1];
+   
+   for(int i=0;i<=n1;i++)
+   {
+       for(int j=0;j<=n2;j++)
+       {
+           for(int k=0;k<=n3;k++)
+           {
+               dp[i][j][k]=-1;
+           }
+       }
+   }
+   dp[0][0][0]=0;
+   for(int i=0;i<=n1;i++)
+   {
+       for(int j=0;j<=n2;j++)
+       {
+           for(int k=0;k<=n3;k++)
+           {
+               
+               if(i==0 || j==0 || k==0)
+               {
+               dp[i][j][k]=0;
+               continue ;
+               }
+               
+               else if(A[i-1]==B[j-1] && A[i-1]==C[k-1])
+               dp[i][j][k]=1+dp[i-1][j-1][k-1];
+               
+               else dp[i][j][k]=max(dp[i-1][j][k],max(dp[i][j-1][k],dp[i][j][k-1]));
+           }
+       }
+   }
+   return dp[n1][n2][n3];
+}
+
+//LCS of 3 string 
+int LCSof3 (string A, string B, string C, int n1, int n2, int n3)
+{
+   int dp[n1+1][n2+1][n3+1];
+   
+   for(int i=0;i<=n1;i++)
+   {
+       for(int j=0;j<=n2;j++)
+       {
+           for(int k=0;k<=n3;k++)
+           {
+               dp[i][j][k]=-1;
+           }
+       }
+   }
+  
+   for(int i=0;i<=n1;i++)
+   {
+       for(int j=0;j<=n2;j++)
+       {
+           for(int k=0;k<=n3;k++)
+           {
+               
+               if(i==0 || j==0 || k==0)
+               {
+               dp[i][j][k]=0;
+               continue ;
+               }
+               
+               else if(A[i-1]==B[j-1] && A[i-1]==C[k-1])
+               dp[i][j][k]=1+dp[i-1][j-1][k-1];
+               
+               else dp[i][j][k]=max(dp[i-1][j][k],max(dp[i][j-1][k],dp[i][j][k-1]));
+           }
+       }
+   }
+   return dp[n1][n2][n3];
+}
+
+//Equal sum partition of the array 
+int equalPartition(int N, int arr[])
+    {
+        int sum=0;
+        
+        for(int i=0;i<N;i++)
+        sum+=arr[i];
+        
+        if(sum%2!=0)
+        return 0;
+        
+        sum=sum/2;
+        
+        vector<vector<int>>dp(N+1,vector<int>(sum+1,0));
+        
+        for(int i=1;i<=N;i++)
+        {
+            for(int j=0;j<=sum;j++)
+            {
+                dp[i][j]=dp[i-1][j];
+                
+                if(j==arr[i-1])
+                dp[i][j]=1;
+                
+                else if (j>arr[i-1])
+                dp[i][j]=dp[i][j] || dp[i-1][j-arr[i-1]];
+                
+            }
+        }
+        return dp[N][sum];
+    }
+};
+
+//Box stacking Leetcode version 
+int maxHeight(vector<vector<int>>& A) {
+        for (auto& a : A)
+            sort(begin(a), end(a));
+       
+        sort(A.begin(), A.end());
+        int n = A.size(), res = 0;
+        vector<int> dp(n);
+        for (int j = 0; j < n; ++j)
+        {
+            dp[j]=A[j][2];
+            for (int i = 0; i < j; ++i)
+                if (A[i][0] <= A[j][0] && A[i][1] <= A[j][1] && A[i][2] <= A[j][2]) {
+                    dp[j] = max(dp[j], dp[i] + A[j][2]);
+                    
+                }
+            res = max(res, dp[j]);
+        }
+        return res;
+}
+
+//Minimum insertion to make it palindrome 
+int countMin(string str){
+    
+    
+            string x=str;
+            reverse(x.begin(),x.end());
+            
+            int n=x.length();
+            
+            vector<vector<int>>dp(n+1,vector<int>(n+1,0));
+            
+            for(int i=1;i<=n;i++)
+            {
+                for(int j=1;j<=n;j++)
+                {
+                    if(str[i-1]==x[j-1])
+                    dp[i][j]=1+dp[i-1][j-1];
+                    else dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+                }
+            }
+        return x.length()-dp[n][n];
+    }
+
+// max product cutting 
+int maxrodcutting(int n)
+{
+    dp[0]=0;
+    dp[1]=0;
+    dp[2]=1;
+    dp[3]=2;
+    dp[4]=4;
+    for(int i=5;i<=n;i++)
+    {
+        dp[i]=0;
+        for(int j=1;j<i;j++)
+        dp[i]=max(dp[i],max((i-j)*j,dp[j]*(i-j)));
+        
+        cout<<i<<" "<<dp[i]<<endl;
+    }
+    cout<<dp[n];
+}
+
+// O(1) space approach 
+int maxproductcutting(int n)
+{
+    if(n==2 || n==3) return n-1;
+    
+    int pro=1;
+    while(n>4)
+    {
+        n-=3;
+        pro*=3;
+    }
+    return n*pro;
+}
+
+
+//Optimal statergy to win a game 
+ int solve(vector<int>&nums,int i,int j,vector<vector<int>>&dp)
+    {
+        if(i==j)
+            return nums[i];
+        
+        if(i>j)
+            return 0;
+        
+        if(dp[i][j]!=-1)
+            return dp[i][j];
+        
+        return dp[i][j]=max(nums[i]+min(solve(nums,i+2,j,dp),solve(nums,i+1,j-1,dp)),
+                            nums[j]+min(solve(nums,i,j-2,dp),solve(nums,i+1,j-1,dp)));
+    }
+    bool PredictTheWinner(vector<int>& nums) {
+        int sum=0;
+        for(int i=0;i<nums.size();i++)
+            sum+=nums[i];
+        
+        int n=nums.size();
+        vector<vector<int>>dp(n,vector<int>(n,-1));
+        
+        int val=solve(nums,0,nums.size()-1,dp);
+        
+        if(sum%2==0 && val>=sum/2)
+            return true ;
+        
+        if(sum%2!=0 && val>sum/2)
+            return true;
+        
+        return false;
+}
+
+//Word break 
+ bool wordBreak(string s, vector<string>& wordDict) {
+        
+        int n=s.length();
+        unordered_map<string,int>mp;
+        
+        for(int i=0;i<wordDict.size();i++)
+            mp[wordDict[i]]=1;
+        
+        vector<bool>dp(n,false);
+        
+        for(int i=0;i<n;i++)
+        {
+            if(mp.find(s.substr(0,i+1))!=mp.end())
+                dp[i]=true;
+            
+            if(dp[i]==true)
+            {
+                for(int j=i+1;j<n;j++)
+                {
+                    if(mp.find(s.substr(i+1,j-i))!=mp.end())
+                       dp[j]=true;
+                    
+                    if(j==n-1 && dp[j])
+                        return true;
+                }
+            }
+        }
+        return dp[n-1];     
+}
+
+// Number of solutions ax + by  + ..... =n 
+
+int solve(vector<int>v,int n)
+{
+    int dp[n+1];
+    dp[0]=1;
+    
+    for(int i=1;i<=n;i++)dp[i]=0;
+    
+    for(int i=0;i<v.size();i++)
+    {
+        for(int j=v[i];j<=n;j++)
+        {
+            dp[j]+=dp[j-v[i]];
+        }
+    }
+    return dp[n];
+}
+
+//Mobile Numeric Key 
+	long long getCount(int N)
+	{
+	    map<long long,long long>mp;
+	    
+	    for(int i=0;i<=9;i++)
+	    mp[i]=1;
+	    
+	    for(int i=1;i<N;i++)
+	    {
+	        map<long long,long long>x;
+	        
+	            x[0]=mp[8]+mp[0];
+	            x[1]=mp[1]+mp[2]+mp[4];
+	            x[2]=mp[2]+mp[3]+mp[1]+mp[5];
+	            x[3]=mp[2]+mp[6]+mp[3];
+	            x[4]=mp[4]+mp[1]+mp[5]+mp[7];
+	            x[5]=mp[5]+mp[2]+mp[8]+mp[4]+mp[6];
+	            x[6]=mp[3]+mp[9]+mp[5]+mp[6];
+	            x[7]=mp[7]+mp[8]+mp[4];
+	            x[8]=mp[8]+mp[0]+mp[7]+mp[9]+mp[5];
+	            x[9]=mp[6]+mp[9]+mp[8];
+	        
+	        mp=x;
+	    }
+	    long long sum=0;
+	    
+	    for(int i=0;i<10;i++)
+	    sum+=mp[i];
+	    
+	    return sum;
+}
+
+//The Painter's Partition Problem  
+ pair<int,bool> solve(int arr[],int mid,int k,int n)
+    {
+        int pain=1;
+        long long sum=0;
+        long long val=-1;
+        for(int i=0;i<n;i++)
+        {
+            sum+=arr[i];
+            
+            if(sum>mid)
+            {
+                val=max(sum-arr[i],val);
+                sum=arr[i];
+                pain++;
+            }
+            if(pain>k)return {-1,false};
+        }
+        val=max(val,sum);
+        return {val,true};
+    }
+  public:
+    long long minTime(int arr[], int n, int k)
+    {
+        long long l=0;
+        long long h=0;
+        for(int i=0;i<n;i++)h+=(long long)arr[i];
+        long long ans=INT_MAX;
+        while(l<=h)
+        {
+            long long mid=l+(h-l)/2;
+            
+            pair<long long,bool>flag=solve(arr,mid,k,n);
+            
+            if(flag.second)
+            {
+             ans=min(ans,flag.first);
+             h=mid-1;
+            }
+            else {
+                l=mid+1;
+            }
+        }
+        return ans;
+}
+    
+//Interleaving String 
+ bool isInterleave(string s1, string s2, string s3) {
+        
+        if(s1.size()+s2.size()!=s3.size())
+            return false;
+        
+        int n=s1.size(),m=s2.size();
+        vector<vector<bool>>dp(n+1,vector<bool>(m+1,false));
+        
+        dp[0][0]=true;
+        
+        for(int i=0;i<=n;i++)
+        {
+            for(int j=0;j<=m;j++)
+            {
+                if(i>0 && s1[i-1]==s3[i+j-1])
+                    dp[i][j]=dp[i][j]||dp[i-1][j];
+                
+                if(j>0 && s2[j-1]==s3[i+j-1])
+                    dp[i][j]=dp[i][j] || dp[i][j-1];
+            }
+        }
+        
+        return dp[n][m];
+}
+
+int main() {
+	// your code goes here
+	return 0;
+}

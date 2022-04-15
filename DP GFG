@@ -1,0 +1,195 @@
+Given an m x n integers matrix, return the length of the longest increasing path in matrix.
+ 
+ class Solution {
+public:
+    int solve(vector<vector<int>>& matrix, vector<vector<int>>&dp,int i,int j,int n,int m,vector<vector<bool>>&vis){
+        if(i<0 || j<0 || i>=n || j>=m)return 0;
+        if(dp[i][j]!=-1)return dp[i][j];
+        int left=0,right=0,up=0,down=0;
+        
+        vis[i][j]=true;
+        
+        if(j>0 && matrix[i][j]<matrix[i][j-1] )
+            left=solve(matrix,dp,i,j-1,n,m,vis);
+        if(i>0 && matrix[i][j]<matrix[i-1][j] )
+            up=solve(matrix,dp,i-1,j,n,m,vis);
+        if(j<m-1 && matrix[i][j]<matrix[i][j+1] )
+            right=solve(matrix,dp,i,j+1,n,m,vis);
+        if(i<n-1 && matrix[i][j]<matrix[i+1][j] )
+            down=solve(matrix,dp,i+1,j,n,m,vis);
+        
+        return dp[i][j]=1+max(left,max(up,max(down,right)));
+        
+    }
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int n=matrix.size();
+        int m=matrix[0].size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        vector<vector<bool>>vis(n,vector<bool>(m,false));
+        
+       // int ans=solve(matrix,dp,0,0,n,m,vis);
+        
+        int curans=1;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                curans=max(curans,solve(matrix,dp,i,j,n,m,vis));
+                cout<<dp[i][j]<<" ";
+            }
+            cout<<endl;
+        }
+        return curans;        
+    }
+};
+
+
+//Target Sum
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int target) {
+        int sum=0;
+        for(int i=0;i<nums.size();i++)sum+=nums[i];
+        int n=nums.size();
+        vector<vector<int>>dp(n+1,vector<int>(sum+1,0));
+        dp[0][0]=1;
+        
+        for(int i=1;i<=n;i++){
+            for(int j=0;j<=sum;j++){
+                
+                dp[i][j]=dp[i-1][j];
+                if(j>=nums[i-1])
+                    dp[i][j]+=dp[i-1][j-nums[i-1]];
+                
+            }
+        }
+        int find = (target+sum+1)/2;
+        
+        for(int i=0;i<=sum;i++){
+            if(dp[n][i]>0 && i==find)
+                return dp[n][find];
+        }
+        return -1;
+        
+    }
+};
+
+//0-1 Knapsack 
+class Solution
+{
+    public:
+    //Function to return max value that can be put in knapsack of capacity W.
+    int solve(int w,int wt[],int val[],int index,vector<vector<int>>&dp){
+        if(index<0)return 0;
+        
+        if(dp[w][index]!=-1)return dp[w][index];
+        
+        int taken=0,nottaken=0;
+        if(w>=wt[index])
+        taken = val[index]+solve(w-wt[index],wt,val,index-1,dp);
+        
+        nottaken = solve(w,wt,val,index-1,dp);
+        
+        return dp[w][index]=max(taken,nottaken);
+    }
+    int knapSack(int W, int wt[], int val[], int n) 
+    { 
+      vector<vector<int>>dp(W+1,vector<int>(n+1,-1));
+      return solve(W,wt,val,n-1,dp);
+    }
+};
+
+//Shortest Super Subsequence 
+
+class Solution
+{
+    public:
+    //Function to find length of shortest common supersequence of two strings.
+    int shortestCommonSupersequence(string X, string Y, int n, int m)
+    {
+       // int n=X.size(),m=Y.size();
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(X[i-1]==Y[j-1])
+                dp[i][j]=1+dp[i-1][j-1];
+                else dp[i][j]=max(dp[i][j-1],dp[i-1][j]);
+            }
+        }
+        int cur=dp[n][m];
+        return (n-cur)+(m-cur)+cur;
+        
+    }
+};
+
+//Partiton Equal Sum
+class Solution{
+public:
+    int equalPartition(int N, int arr[])
+    {
+        int sum=0;
+        for(int i=0;i<N;i++)sum+=arr[i];
+        if(sum%2!=0)return false;
+        
+        vector<bool>prev(sum+1,false),cur(sum+1,false);
+        cur[0]=prev[0]=true;
+        for(int i=1;i<=N;i++){
+            
+            for(int j=1;j<=sum;j++){
+                
+                cur[j]=prev[j];
+                if(j>=arr[i-1])
+                cur[j]=cur[j] || prev[j-arr[i-1]];
+                
+            }
+            prev=cur;
+        }
+        int find=(sum)/2;
+        return prev[find];
+        
+    }
+};
+
+//Rod Cutting 
+class Solution{
+  public:
+  int solve(int len,int price[],int ind,vector<vector<int>>&dp){
+      if(ind<=0)return 0;
+      if(len<=0)return 0;
+      
+      if(dp[len][ind]!=-1)return dp[len][ind];
+      
+      int taken=0,nottaken=0;
+      
+      if(len>=ind)
+      taken=price[ind-1]+solve(len-ind,price,ind,dp);
+      
+      nottaken=solve(len,price,ind-1,dp);
+      
+      return dp[len][ind]=max(taken,nottaken);
+  }
+    int cutRod(int price[], int n) {
+        vector<vector<int>>dp(n+1,vector<int>(n+1,-1));
+        return solve(n,price,n,dp);
+    }
+};
+
+//Maximum Product Cutting 
+#include <iostream>
+using namespace std;
+
+/* The main function that returns the max possible product */
+int maxProd(int n)
+{
+// n equals to 2 or 3 must be handled explicitly
+if (n == 2 || n == 3) return (n-1);
+
+// Keep removing parts of size 3 while n is greater than 4
+int res = 1;
+while (n > 4)
+{
+	n -= 3;
+	res *= 3; // Keep multiplying 3 to res
+}
+return (n * res); // The last part multiplied by previous parts
+}
+

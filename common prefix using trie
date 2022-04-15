@@ -1,0 +1,58 @@
+struct trie{
+    char ch;
+    int we;
+    vector<trie*>v;
+    
+    trie(char p)
+    {
+        ch=p;
+        we=0;
+        for(int i=0;i<26;i++)
+        v.push_back(NULL);
+        
+    }
+};
+void insert(string str,trie* head)
+{
+    trie* cur=head;
+    int index=-1;
+    for(int i=0;i<str.size();i++)
+    {
+        index=str[i]-'a';
+        if(cur->v[index]==NULL)
+        {
+            trie* temp=new trie(str[i]);
+            cur->v[index]=temp;
+        }
+        cur=cur->v[index];
+        cur->we+=1;
+    }
+}
+string search(string str,trie* head,int n)
+{
+    trie* cur=head;
+    int index=-1;
+    string ans="";
+    for(int i=0;i<str.size();i++)
+    {
+        index=str[i]-'a';
+        if(cur->v[index]->we==n)
+        {
+            ans.push_back(str[i]);
+        }
+        else break;
+        
+        cur=cur->v[index];
+    }
+    return ans;
+}
+
+string Solution::longestCommonPrefix(vector<string> &A) {
+    trie* head=new trie('$');
+    
+    int max=0;
+    for(int i=0;i<A.size();i++)
+    insert(A[i],head);
+    
+    return search(A[0],head,A.size());
+}
